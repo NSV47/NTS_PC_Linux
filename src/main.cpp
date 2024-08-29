@@ -19,8 +19,25 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  while(Serial.available()>0){
+    char inChar = (char)Serial.read();
+    inputString += inChar;
+    stringComplete = true;
+  }
+
+  if(stringComplete){
+    stringComplete = false;
+    SerialPort.print(inputString);
+    inputString = "";
+  }
+
+  if(SerialPort.available()>0){
+    Serial.write(SerialPort.read());
+  }
+//--------------------------------------------------
   if (stringComplete) {
-  #if 1
+    // SerialPort.print(inputString);
+  #if 0
     uint16_t strLen = inputString.length();
     for(uint16_t i = 0; i < strLen; ++i){
       if(inputString[i] <= 0xF){
@@ -55,14 +72,17 @@ int myFunction(int x, int y) {
   routine is run between each time loop() runs, so using delay inside loop can
   delay response. Multiple bytes of data may be available.
 */
+#if 0
 void serialEvent() {
   if (Serial.available()) { // while
     char inChar = (char)Serial.read();
     
-    if(inChar == 0xE0){
+    if(inChar == 0xC0){
+      inputString += 0xC0;
       stringComplete = true;
     }else{
       inputString += inChar;
     }
   }
 }
+#endif
